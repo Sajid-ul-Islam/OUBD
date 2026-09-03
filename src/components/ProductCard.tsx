@@ -16,9 +16,10 @@ import { APP_CONFIG } from '../constants/config';
 
 interface ProductCardProps {
   product: Product;
+  cardWidth?: number;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+export const ProductCard: React.FC<ProductCardProps> = ({ product, cardWidth }) => {
   const router = useRouter();
   const { toggleWishlist, isInWishlist, addToCart } = useApp();
   const isWished = isInWishlist(product.id);
@@ -57,7 +58,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const imageUrl = product.images.length > 0 ? product.images[0] : null;
 
   return (
-    <Animated.View style={[styles.wrapper, { transform: [{ scale: scaleAnim }] }]}>
+    <Animated.View
+      style={[
+        styles.wrapper,
+        cardWidth ? { width: cardWidth, flex: 0 } : null,
+        { transform: [{ scale: scaleAnim }] },
+      ]}
+    >
       <TouchableOpacity
         style={styles.card}
         onPress={handlePress}

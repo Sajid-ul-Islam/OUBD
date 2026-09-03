@@ -1,14 +1,19 @@
 import React from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { StatusBar as RNStatusBar, Platform } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AppProvider } from '../store/AppContext';
+import { StartupAnimation } from '../components/StartupAnimation';
 
 export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <AppProvider>
         <StatusBar style="dark" />
+        {Platform.OS === 'android' && (
+          <RNStatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
+        )}
         <Stack
           screenOptions={{
             headerShown: false,
@@ -26,6 +31,7 @@ export default function RootLayout() {
           <Stack.Screen name="auth/login" options={{ headerShown: false }} />
           <Stack.Screen name="admin/dashboard" options={{ headerShown: false }} />
         </Stack>
+        <StartupAnimation />
       </AppProvider>
     </SafeAreaProvider>
   );

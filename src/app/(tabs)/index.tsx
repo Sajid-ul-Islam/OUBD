@@ -13,6 +13,7 @@ import { Header } from '../../components/Header';
 import { BannerCarousel } from '../../components/BannerCarousel';
 import { CategoryPills } from '../../components/CategoryPills';
 import { ProductCard } from '../../components/ProductCard';
+import { CategoryShowcaseSection } from '../../components/CategoryShowcaseSection';
 import { AnimatedFadeIn } from '../../components/AnimatedFadeIn';
 import { productService } from '../../services/products/productService';
 import { Product, Banner } from '../../types';
@@ -37,21 +38,77 @@ const SERIES_TAGS = [
   { label: 'CYCLE LIFE', desc: 'Journey through Dunya', icon: 'bicycle-outline' },
 ];
 
+const CATEGORY_SHOWCASES = [
+  {
+    id: 'panjabi-thobe',
+    title: 'Royal Panjabi & Emirati Thobes',
+    subtitle: 'Fine Egyptian combed cotton with luxury collar embroidery',
+    badge: 'LUXURY SUNNAH WEAR',
+    badgeColor: Colors.accent,
+    coverPhoto: 'https://oneummahbd.shop/cdn/shop/files/premium-panjabi-banner.png?v=1778589962&width=1920',
+    categories: ['PANJABI', 'Thobe'],
+    targetCategory: 'PANJABI',
+  },
+  {
+    id: 'dawah-tshirts',
+    title: 'Dawah Concept Streetwear',
+    subtitle: 'Heavyweight 220+ GSM cotton • Buy 5 Combo @ ৳1399',
+    badge: 'DAWAH STREETWEAR',
+    badgeColor: Colors.sale,
+    coverPhoto: 'https://oneummahbd.shop/cdn/shop/files/Banner_v2_3.png?v=1778489445&width=1920',
+    categories: ['T-Shirt'],
+    targetCategory: 'T-Shirt',
+  },
+  {
+    id: 'denim-joggers',
+    title: 'Stretch Denim Joggers & Cargo',
+    subtitle: 'Classic denim aesthetics with flexible, athletic jogger comfort',
+    badge: 'MODEST FIT TWILL',
+    badgeColor: Colors.info,
+    coverPhoto: 'https://cdn.shopify.com/s/files/1/0708/1289/3263/files/MPfGeKmqbGOSFnYXG8BzPZ2u4EKHw64dWMLAJtZb.webp?v=1778559091',
+    categories: ['PANTS'],
+    targetCategory: 'PANTS',
+  },
+  {
+    id: 'docker-caps',
+    title: 'Authentic Brimless Docker Caps',
+    subtitle: 'Brimless Sunnah-inspired silhouette in breathable cotton twill',
+    badge: 'SUNNAH HEADWEAR',
+    badgeColor: Colors.warning,
+    coverPhoto: 'https://oneummahbd.shop/cdn/shop/files/visor-cap-banner.png?v=1778590026&width=1920',
+    categories: ['Docker Cap', 'Cap'],
+    targetCategory: 'Docker Cap',
+  },
+  {
+    id: 'attar-perfume',
+    title: 'Pure Artisanal Attar Oils',
+    subtitle: '100% Halal alcohol-free perfume oils with deep lasting sillage',
+    badge: '100% NON-ALCOHOLIC',
+    badgeColor: Colors.accent,
+    coverPhoto: 'https://oneummahbd.shop/cdn/shop/files/Banner_v2_2_3f7dbbed-1222-4aa7-a98b-da88de5f7e50.png?v=1778678354',
+    categories: ['Perfume'],
+    targetCategory: 'Perfume',
+  },
+];
+
 export default function HomeScreen() {
   const router = useRouter();
   const [banners, setBanners] = useState<Banner[]>([]);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
-  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredGridProducts, setFilteredGridProducts] = useState<Product[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
   const loadData = useCallback(async () => {
-    const [bannerData, allProducts] = await Promise.all([
+    const [bannerData, catalogProducts, gridItems] = await Promise.all([
       productService.getBanners(),
+      productService.getProducts(),
       productService.getProducts({ category: selectedCategory }),
     ]);
 
     setBanners(bannerData);
-    setProducts(allProducts);
+    setAllProducts(catalogProducts);
+    setFilteredGridProducts(gridItems);
   }, [selectedCategory]);
 
   useEffect(() => {
@@ -71,9 +128,15 @@ export default function HomeScreen() {
     });
   };
 
+  const getProductsForShowcase = (categories: string[]) => {
+    return allProducts.filter((p) =>
+      categories.some((cat) => p.category.toLowerCase() === cat.toLowerCase())
+    );
+  };
+
   return (
     <View style={styles.container}>
-      {/* Full-width clean Header with actual brand logo */}
+      {/* Edge-to-edge status bar Header with brand logo & notifications */}
       <Header />
 
       <ScrollView
@@ -93,7 +156,12 @@ export default function HomeScreen() {
           <TouchableOpacity
             style={styles.tickerBar}
             activeOpacity={0.9}
-            onPress={() => router.push({ pathname: '/(tabs)/categories', params: { category: 'T-Shirt' } })}
+            onPress={() =>
+              router.push({
+                pathname: '/(tabs)/categories',
+                params: { category: 'T-Shirt' },
+              })
+            }
           >
             <View style={styles.tickerInner}>
               <Ionicons name="flash" size={13} color={Colors.textInverse} />
@@ -105,7 +173,7 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </AnimatedFadeIn>
 
-        {/* Hero Campaign Banners with Animated Cover Photos */}
+        {/* Hero Campaign Banners Carousel */}
         {banners.length > 0 && (
           <AnimatedFadeIn delay={150} duration={400}>
             <BannerCarousel banners={banners} />
@@ -141,18 +209,47 @@ export default function HomeScreen() {
           </ScrollView>
         </AnimatedFadeIn>
 
-        {/* Category Pills Filter */}
+        {/* Dynamic Category Showcases with Authentic Cover Photos */}
+        <View style={styles.showcaseMasterSection}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Featured Category Collections</Text>
+            <Text style={styles.sectionSubtitle}>
+              Authentic Sunnah apparel crafted with premium materials
+            </Text>
+          </View>
+
+          {CATEGORY_SHOWCASES.map((showcase) => {
+            const showcaseProducts = getProductsForShowcase(showcase.categories);
+            return (
+              <CategoryShowcaseSection
+                key={showcase.id}
+                title={showcase.title}
+                subtitle={showcase.subtitle}
+                badge={showcase.badge}
+                badgeColor={showcase.badgeColor}
+                coverPhoto={showcase.coverPhoto}
+                targetCategory={showcase.targetCategory}
+                products={showcaseProducts}
+              />
+            );
+          })}
+        </View>
+
+        {/* Interactive Filter Grid */}
         <AnimatedFadeIn delay={250} duration={400}>
           <View style={styles.sectionHeader}>
             <View style={styles.sectionRow}>
-              <Text style={styles.sectionTitle}>Featured Collections</Text>
+              <Text style={styles.sectionTitle}>All Products & New Drops</Text>
               <TouchableOpacity
                 onPress={() => router.push('/(tabs)/categories')}
                 hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               >
-                <Text style={styles.seeAllText}>Browse All →</Text>
+                <Text style={styles.seeAllText}>Browse Catalog →</Text>
               </TouchableOpacity>
             </View>
+            <Text style={styles.sectionSubtitle}>
+              Filter instantly by category with smooth transitions
+            </Text>
           </View>
 
           <CategoryPills
@@ -164,16 +261,16 @@ export default function HomeScreen() {
 
         {/* Product Showcase Grid with Transition Animations */}
         <View style={styles.gridContainer}>
-          {products.map((item, idx) => (
+          {filteredGridProducts.map((item, idx) => (
             <View key={item.id} style={styles.gridItem}>
-              <AnimatedFadeIn delay={Math.min(idx * 40, 300)} duration={350}>
+              <AnimatedFadeIn delay={Math.min(idx * 30, 250)} duration={300}>
                 <ProductCard product={item} />
               </AnimatedFadeIn>
             </View>
           ))}
         </View>
 
-        {/* Showrooms Banner */}
+        {/* Showrooms Teaser Banner */}
         <AnimatedFadeIn delay={300} duration={400}>
           <TouchableOpacity
             style={styles.showroomsTeaser}
@@ -304,6 +401,9 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: Colors.textMuted,
     marginTop: 2,
+  },
+  showcaseMasterSection: {
+    marginTop: Spacing.xs,
   },
   gridContainer: {
     flexDirection: 'row',

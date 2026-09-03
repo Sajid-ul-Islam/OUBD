@@ -1,10 +1,19 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  Platform,
+  StatusBar as RNStatusBar,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Spacing, Typography, Radius, Shadows } from '../constants/theme';
 import { useApp } from '../store/AppContext';
+import { NotificationModal } from './NotificationModal';
 
 interface HeaderProps {
   title?: string;
@@ -21,92 +30,111 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { cartCount, wishlist } = useApp();
+  const { wishlist } = useApp();
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(3);
+
+  // Exact Android status bar offset to achieve true edge-to-edge
+  const statusBarHeight = Platform.OS === 'android' ? (RNStatusBar.currentHeight || insets.top || 24) : insets.top;
+  const topPadding = Math.max(statusBarHeight, 10);
 
   return (
-    <View style={[styles.wrapper, { paddingTop: Math.max(insets.top, 10) }]}>
-      <View style={styles.bar}>
-        {/* Left: Back Button or Actual Brand Logo */}
-        <View style={styles.leftContainer}>
-          {showBack ? (
-            <TouchableOpacity
-              onPress={() => router.back()}
-              style={styles.actionBtn}
-              hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-              accessibilityLabel="Go back"
-            >
-              <Ionicons name="arrow-back" size={22} color={Colors.primary} />
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              onPress={() => router.push('/(tabs)')}
-              style={styles.logoBtn}
-              activeOpacity={0.85}
-              accessibilityLabel="One Ummah BD Home"
-            >
-              <Image
-                source={require('../../assets/images/oubd-logo.png')}
-                style={styles.logoImage}
-                resizeMode="contain"
-              />
-            </TouchableOpacity>
-          )}
-
-          {title && (
-            <Text style={styles.headerTitle} numberOfLines={1}>
-              {title}
-            </Text>
-          )}
-        </View>
-
-        {/* Right Actions: Search, Wishlist (Kept in Header), Cart */}
-        {showActions && (
-          <View style={styles.rightContainer}>
-            {showSearch && (
+    <>
+      <View style={[styles.wrapper, { paddingTop: topPadding }]}>
+        <View style={styles.bar}>
+          {/* Left: Back Button or Actual Brand Logo */}
+          <View style={styles.leftContainer}>
+            {showBack ? (
               <TouchableOpacity
-                onPress={() => router.push('/search')}
+                onPress={() => router.back()}
                 style={styles.actionBtn}
-                accessibilityLabel="Search"
+                hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+                accessibilityLabel="Go back"
               >
-                <Ionicons name="search-outline" size={21} color={Colors.primary} />
+                <Ionicons name="arrow-back" size={22} color={Colors.primary} />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                onPress={() => router.push('/(tabs)')}
+                style={styles.logoBtn}
+                activeOpacity={0.85}
+                accessibilityLabel="One Ummah BD Home"
+              >
+                <Image
+                  source={require('../../assets/images/oubd-logo.png')}
+                  style={styles.logoImage}
+                  resizeMode="contain"
+                />
               </TouchableOpacity>
             )}
 
-            {/* Wishlist Icon in Header */}
-            <TouchableOpacity
-              onPress={() => router.push('/wishlist')}
-              style={styles.actionBtn}
-              accessibilityLabel="Wishlist"
-            >
-              <Ionicons
-                name={wishlist.length > 0 ? 'heart' : 'heart-outline'}
-                size={22}
-                color={wishlist.length > 0 ? Colors.sale : Colors.primary}
-              />
-              {wishlist.length > 0 && (
-                <View style={[styles.badge, { backgroundColor: Colors.sale }]}>
-                  <Text style={styles.badgeText}>{wishlist.length}</Text>
-                </View>
-              )}
-            </TouchableOpacity>
-
-            {/* Cart Icon in Header */}
-            <TouchableOpacity
-              onPress={() => router.push('/(tabs)/cart')}
-              style={styles.actionBtn}
-              accessibilityLabel="Cart"
-            >
-              <Ionicons name="bag-handle-outline" size={21} color={Colors.primary} />
-              {cartCount > 0 && (
-                <View style={styles.badge}>
-                  <Text style={styles.badgeText}>{cartCount}</Text>
-                </View>
-              )}
-            </TouchableOpacity>
+            {title && (
+              <Text style={styles.headerTitle} numberOfLines={1}>
+                {title}
+              </Text>
+            )}
           </View>
-        )}
+
+          {/* Right Actions: Search, Wishlist, Notification Center (Cart moved to bottom nav) */}
+          {showActions && (
+            <View style={styles.rightContainer}>
+              {showSearch && (
+                <TouchableOpacity
+                  onPress={() => router.push('/search')}
+                  style={styles.actionBtn}
+                  accessibilityLabel="Search"
+                >
+                  <Ionicons name="search-outline" size={21} color={Colors.primary} />
+                </TouchableOpacity>
+              )}
+
+              {/* Wishlist Icon in Header */}
+              <TouchableOpacity
+                onPress={() => router.push('/wishlist')}
+                style={styles.actionBtn}
+                accessibilityLabel="Wishlist"
+              >
+                <Ionicons
+                  name={wishlist.length > 0 ? 'heart' : 'heart-outline'}
+                  size={22}
+                  color={wishlist.length > 0 ? Colors.sale : Colors.primary}
+                />
+                {wishlist.length > 0 && (
+                  <View style={[styles.badge, { backgroundColor: Colors.sale }]}>
+                    <Text style={styles.badgeText}>{wishlist.length}</Text>
+                  </View>
+                )}
+              </TouchableOpacity>
+
+              {/* Notification Center Icon in Header */}
+              <TouchableOpacity
+                onPress={() => setShowNotifications(true)}
+                style={styles.actionBtn}
+                accessibilityLabel="Notifications"
+              >
+                <Ionicons
+                  name={unreadCount > 0 ? 'notifications' : 'notifications-outline'}
+                  size={22}
+                  color={unreadCount > 0 ? Colors.accent : Colors.primary}
+                />
+                {unreadCount > 0 && (
+                  <View style={[styles.badge, { backgroundColor: Colors.accent }]}>
+                    <Text style={styles.badgeText}>{unreadCount}</Text>
+                  </View>
+                )}
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
       </View>
-    </View>
+
+      {/* Notification Modal */}
+      <NotificationModal
+        visible={showNotifications}
+        onClose={() => setShowNotifications(false)}
+        onUnreadCountChange={setUnreadCount}
+      />
+    </>
   );
 };
 

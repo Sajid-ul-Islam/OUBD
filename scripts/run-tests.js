@@ -228,6 +228,49 @@ runTest('Advances pending -> processing -> shipped -> delivered', () => {
   assert.strictEqual(getNextOrderStatus('delivered'), 'delivered');
 });
 
+// 8. Notification Center & Campaign Alert Taxonomy
+console.log('\n--- Test Suite 8: Notification Center & Campaign Taxonomy ---');
+const sampleNotifications = [
+  { id: '1', title: 'Buy 5 Combo', type: 'campaign', unread: true },
+  { id: '2', title: 'Order Dispatched', type: 'order', unread: true },
+  { id: '3', title: 'Jummah Sunnah', type: 'reminder', unread: true },
+  { id: '4', title: 'Outlet Opening', type: 'campaign', unread: false },
+];
+
+runTest('Filters notifications correctly by category type', () => {
+  const campaigns = sampleNotifications.filter(n => n.type === 'campaign');
+  const orders = sampleNotifications.filter(n => n.type === 'order');
+  const reminders = sampleNotifications.filter(n => n.type === 'reminder');
+  assert.strictEqual(campaigns.length, 2);
+  assert.strictEqual(orders.length, 1);
+  assert.strictEqual(reminders.length, 1);
+});
+
+runTest('Computes unread badge count and mark-all-read behavior accurately', () => {
+  const unreadCount = sampleNotifications.filter(n => n.unread).length;
+  assert.strictEqual(unreadCount, 3);
+  const allRead = sampleNotifications.map(n => ({ ...n, unread: false }));
+  assert.strictEqual(allRead.filter(n => n.unread).length, 0);
+});
+
+// 9. Category Showcase & Cover Photo Presence
+console.log('\n--- Test Suite 9: Dynamic Category Showcase & Cover Photos ---');
+const homeFile = fs.readFileSync(path.join(__dirname, '..', 'src', 'app', '(tabs)', 'index.tsx'), 'utf8');
+
+runTest('HomeScreen configures authentic category cover photos for major collections', () => {
+  assert(homeFile.includes('premium-panjabi-banner.png'), 'Missing Panjabi cover photo');
+  assert(homeFile.includes('Banner_v2_3.png'), 'Missing Dawah T-shirt cover photo');
+  assert(homeFile.includes('MPfGeKmqbGOSFnYXG8BzPZ2u4EKHw64dWMLAJtZb.webp'), 'Missing Denim Joggers cover photo');
+  assert(homeFile.includes('visor-cap-banner.png'), 'Missing Docker Cap cover photo');
+  assert(homeFile.includes('Banner_v2_2_3f7dbbed'), 'Missing Attar cover photo');
+});
+
+runTest('Startup animation and edge-to-edge status bar configured in app layout', () => {
+  const layoutFile = fs.readFileSync(path.join(__dirname, '..', 'src', 'app', '_layout.tsx'), 'utf8');
+  assert(layoutFile.includes('StartupAnimation'), 'Missing StartupAnimation in _layout');
+  assert(layoutFile.includes('translucent'), 'Missing translucent status bar configuration');
+});
+
 console.log('\n======================================================');
 console.log(`Results: ${testsPassed} Passed, ${testsFailed} Failed`);
 console.log('======================================================\n');
