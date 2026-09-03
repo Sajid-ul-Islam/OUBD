@@ -6,7 +6,6 @@ import {
   ScrollView,
   RefreshControl,
   TouchableOpacity,
-  FlatList,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -14,10 +13,10 @@ import { Header } from '../../components/Header';
 import { BannerCarousel } from '../../components/BannerCarousel';
 import { CategoryPills } from '../../components/CategoryPills';
 import { ProductCard } from '../../components/ProductCard';
+import { AnimatedFadeIn } from '../../components/AnimatedFadeIn';
 import { productService } from '../../services/products/productService';
 import { Product, Banner } from '../../types';
-import { Colors, Spacing, Typography, Radius, Shadows } from '../../constants/theme';
-import { useApp } from '../../store/AppContext';
+import { Colors, Spacing, Radius, Shadows } from '../../constants/theme';
 
 const CATEGORY_NAMES = [
   'All',
@@ -40,11 +39,9 @@ const SERIES_TAGS = [
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { openAIChat } = useApp();
   const [banners, setBanners] = useState<Banner[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [products, setProducts] = useState<Product[]>([]);
-  const [bestSellers, setBestSellers] = useState<Product[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
   const loadData = useCallback(async () => {
@@ -55,7 +52,6 @@ export default function HomeScreen() {
 
     setBanners(bannerData);
     setProducts(allProducts);
-    setBestSellers(allProducts.filter((p) => p.isBestSeller).slice(0, 6));
   }, [selectedCategory]);
 
   useEffect(() => {
@@ -77,6 +73,7 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
+      {/* Full-width clean Header with actual brand logo */}
       <Header />
 
       <ScrollView
@@ -91,132 +88,136 @@ export default function HomeScreen() {
           />
         }
       >
-        {/* Announcement Ticker Bar */}
-        <TouchableOpacity
-          style={styles.tickerBar}
-          activeOpacity={0.9}
-          onPress={() => router.push({ pathname: '/(tabs)/categories', params: { category: 'T-Shirt' } })}
-        >
-          <Ionicons name="flash" size={14} color={Colors.textInverse} />
-          <Text style={styles.tickerText}>
-            ⚡ Buy 5 Economy T-Shirts For 1399 Tk Only! Limited Time Offer
-          </Text>
-          <Ionicons name="chevron-forward" size={14} color={Colors.textInverse} />
-        </TouchableOpacity>
+        {/* Animated Announcement Ticker Bar */}
+        <AnimatedFadeIn delay={100} duration={350}>
+          <TouchableOpacity
+            style={styles.tickerBar}
+            activeOpacity={0.9}
+            onPress={() => router.push({ pathname: '/(tabs)/categories', params: { category: 'T-Shirt' } })}
+          >
+            <View style={styles.tickerInner}>
+              <Ionicons name="flash" size={13} color={Colors.textInverse} />
+              <Text style={styles.tickerText}>
+                Buy 5 Economy T-Shirts For 1399 Tk Only! Limited Time Offer
+              </Text>
+              <Ionicons name="chevron-forward" size={13} color={Colors.textInverse} />
+            </View>
+          </TouchableOpacity>
+        </AnimatedFadeIn>
 
-        {/* Hero Banners */}
-        {banners.length > 0 && <BannerCarousel banners={banners} />}
+        {/* Hero Campaign Banners with Animated Cover Photos */}
+        {banners.length > 0 && (
+          <AnimatedFadeIn delay={150} duration={400}>
+            <BannerCarousel banners={banners} />
+          </AnimatedFadeIn>
+        )}
 
-        {/* Series Combos Horizontal Showcase */}
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Signature Dawah Series</Text>
-          <Text style={styles.sectionSubtitle}>Concept wear inspired by Islamic virtues</Text>
-        </View>
+        {/* Signature Dawah Series Showcase */}
+        <AnimatedFadeIn delay={200} duration={400}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Signature Dawah Series</Text>
+            <Text style={styles.sectionSubtitle}>Concept wear inspired by Islamic virtues</Text>
+          </View>
 
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.seriesScroll}
-        >
-          {SERIES_TAGS.map((s, idx) => (
-            <TouchableOpacity
-              key={idx}
-              style={styles.seriesCard}
-              activeOpacity={0.85}
-              onPress={() => handleSeriesPress(s.label)}
-            >
-              <View style={styles.seriesIconCircle}>
-                <Ionicons name={s.icon as any} size={20} color={Colors.accent} />
-              </View>
-              <Text style={styles.seriesLabel}>{s.label}</Text>
-              <Text style={styles.seriesDesc}>{s.desc}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.seriesScroll}
+          >
+            {SERIES_TAGS.map((s, idx) => (
+              <TouchableOpacity
+                key={idx}
+                style={styles.seriesCard}
+                activeOpacity={0.85}
+                onPress={() => handleSeriesPress(s.label)}
+              >
+                <View style={styles.seriesIconCircle}>
+                  <Ionicons name={s.icon as any} size={20} color={Colors.accent} />
+                </View>
+                <Text style={styles.seriesLabel}>{s.label}</Text>
+                <Text style={styles.seriesDesc}>{s.desc}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </AnimatedFadeIn>
 
         {/* Category Pills Filter */}
-        <View style={styles.sectionHeader}>
-          <View style={styles.sectionRow}>
-            <Text style={styles.sectionTitle}>Explore Catalog</Text>
-            <TouchableOpacity
-              onPress={() => router.push('/(tabs)/categories')}
-              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-            >
-              <Text style={styles.seeAllText}>View All →</Text>
-            </TouchableOpacity>
+        <AnimatedFadeIn delay={250} duration={400}>
+          <View style={styles.sectionHeader}>
+            <View style={styles.sectionRow}>
+              <Text style={styles.sectionTitle}>Featured Collections</Text>
+              <TouchableOpacity
+                onPress={() => router.push('/(tabs)/categories')}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              >
+                <Text style={styles.seeAllText}>Browse All →</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
 
-        <CategoryPills
-          categories={CATEGORY_NAMES}
-          selectedCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
-        />
+          <CategoryPills
+            categories={CATEGORY_NAMES}
+            selectedCategory={selectedCategory}
+            onSelectCategory={setSelectedCategory}
+          />
+        </AnimatedFadeIn>
 
-        {/* Filtered Products Grid (2 Columns) */}
+        {/* Product Showcase Grid with Transition Animations */}
         <View style={styles.gridContainer}>
-          {products.map((item) => (
+          {products.map((item, idx) => (
             <View key={item.id} style={styles.gridItem}>
-              <ProductCard product={item} />
+              <AnimatedFadeIn delay={Math.min(idx * 40, 300)} duration={350}>
+                <ProductCard product={item} />
+              </AnimatedFadeIn>
             </View>
           ))}
         </View>
 
-        {/* Showrooms Teaser Banner */}
-        <TouchableOpacity
-          style={styles.showroomsTeaser}
-          activeOpacity={0.9}
-          onPress={() => router.push('/store-locator')}
-        >
-          <View style={styles.showroomTeaserContent}>
-            <View style={styles.showroomIconBox}>
-              <Ionicons name="storefront" size={24} color={Colors.accent} />
+        {/* Showrooms Banner */}
+        <AnimatedFadeIn delay={300} duration={400}>
+          <TouchableOpacity
+            style={styles.showroomsTeaser}
+            activeOpacity={0.9}
+            onPress={() => router.push('/store-locator')}
+          >
+            <View style={styles.showroomTeaserContent}>
+              <View style={styles.showroomIconBox}>
+                <Ionicons name="storefront" size={24} color={Colors.accent} />
+              </View>
+              <View style={styles.showroomTeaserText}>
+                <Text style={styles.showroomTeaserTitle}>Visit Our 15+ Showrooms</Text>
+                <Text style={styles.showroomTeaserSub}>
+                  Bashundhara City • Uttara • Sylhet • Chattogram & More
+                </Text>
+              </View>
             </View>
-            <View style={styles.showroomTeaserText}>
-              <Text style={styles.showroomTeaserTitle}>Visit Our 15+ Showrooms</Text>
-              <Text style={styles.showroomTeaserSub}>
-                Dhaka • Sylhet • Chattogram • Khulna • Rajshahi & More
-              </Text>
+            <View style={styles.showroomTeaserButton}>
+              <Text style={styles.showroomTeaserBtnText}>Outlets</Text>
             </View>
-          </View>
-          <View style={styles.showroomTeaserButton}>
-            <Text style={styles.showroomTeaserBtnText}>Find Outlet</Text>
-          </View>
-        </TouchableOpacity>
+          </TouchableOpacity>
+        </AnimatedFadeIn>
 
         {/* Trust Badges */}
         <View style={styles.trustRow}>
           <View style={styles.trustItem}>
-            <Ionicons name="shield-checkmark" size={20} color={Colors.accent} />
+            <Ionicons name="shield-checkmark" size={18} color={Colors.accent} />
             <Text style={styles.trustTitle}>100% Halal Lifestyle</Text>
             <Text style={styles.trustSub}>Alcohol-free & Modest</Text>
           </View>
           <View style={styles.trustItem}>
-            <Ionicons name="cube" size={20} color={Colors.accent} />
+            <Ionicons name="cube" size={18} color={Colors.accent} />
             <Text style={styles.trustTitle}>Cash on Delivery</Text>
-            <Text style={styles.trustSub}>Pay upon package receipt</Text>
+            <Text style={styles.trustSub}>Pay upon delivery</Text>
           </View>
           <View style={styles.trustItem}>
-            <Ionicons name="repeat" size={20} color={Colors.accent} />
+            <Ionicons name="repeat" size={18} color={Colors.accent} />
             <Text style={styles.trustTitle}>Easy Exchange</Text>
-            <Text style={styles.trustSub}>7-day hassle-free swap</Text>
+            <Text style={styles.trustSub}>7-day hassle-free</Text>
           </View>
         </View>
 
-        {/* Spacing for bottom tab bar */}
         <View style={{ height: 40 }} />
       </ScrollView>
-
-      {/* Floating AI Shopping Assistant ("Ummah Bot") FAB */}
-      <TouchableOpacity
-        style={styles.fab}
-        activeOpacity={0.88}
-        onPress={openAIChat}
-        accessibilityLabel="Chat with Ummah Bot AI Assistant"
-      >
-        <Ionicons name="sparkles" size={20} color={Colors.textInverse} />
-        <Text style={styles.fabText}>Ummah Bot</Text>
-      </TouchableOpacity>
     </View>
   );
 }
@@ -231,21 +232,23 @@ const styles = StyleSheet.create({
   },
   tickerBar: {
     backgroundColor: Colors.sale,
+    paddingVertical: 7,
+    paddingHorizontal: Spacing.md,
+  },
+  tickerInner: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: Spacing.md,
     gap: 6,
   },
   tickerText: {
     color: Colors.textInverse,
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '700',
-    letterSpacing: 0.2,
+    letterSpacing: 0.1,
   },
   sectionHeader: {
-    paddingHorizontal: Spacing.lg,
+    paddingHorizontal: Spacing.md,
     paddingTop: Spacing.md,
     paddingBottom: Spacing.xs,
   },
@@ -255,12 +258,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   sectionTitle: {
-    fontSize: 17,
-    fontWeight: '700',
+    fontSize: 16,
+    fontWeight: '800',
     color: Colors.textPrimary,
   },
   sectionSubtitle: {
-    fontSize: 12,
+    fontSize: 11,
     color: Colors.textMuted,
     marginTop: 2,
   },
@@ -270,7 +273,7 @@ const styles = StyleSheet.create({
     color: Colors.accent,
   },
   seriesScroll: {
-    paddingHorizontal: Spacing.lg,
+    paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     gap: Spacing.sm,
   },
@@ -280,12 +283,12 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
     borderRadius: Radius.md,
     padding: Spacing.md,
-    width: 140,
+    width: 135,
     ...Shadows.sm,
   },
   seriesIconCircle: {
-    width: 36,
-    height: 36,
+    width: 34,
+    height: 34,
     borderRadius: Radius.full,
     backgroundColor: Colors.accentSubtle,
     alignItems: 'center',
@@ -293,7 +296,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs,
   },
   seriesLabel: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '700',
     color: Colors.primary,
   },
@@ -305,7 +308,7 @@ const styles = StyleSheet.create({
   gridContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    paddingHorizontal: Spacing.lg,
+    paddingHorizontal: Spacing.md,
     justifyContent: 'space-between',
     paddingTop: Spacing.sm,
   },
@@ -313,7 +316,7 @@ const styles = StyleSheet.create({
     width: '48.5%',
   },
   showroomsTeaser: {
-    marginHorizontal: Spacing.lg,
+    marginHorizontal: Spacing.md,
     marginVertical: Spacing.md,
     backgroundColor: Colors.primary,
     borderRadius: Radius.lg,
@@ -326,12 +329,12 @@ const styles = StyleSheet.create({
   showroomTeaserContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.md,
+    gap: Spacing.sm,
     flex: 1,
   },
   showroomIconBox: {
-    width: 44,
-    height: 44,
+    width: 40,
+    height: 40,
     borderRadius: Radius.md,
     backgroundColor: 'rgba(255, 255, 255, 0.12)',
     alignItems: 'center',
@@ -341,21 +344,21 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   showroomTeaserTitle: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '700',
     color: Colors.textInverse,
   },
   showroomTeaserSub: {
-    fontSize: 11,
+    fontSize: 10,
     color: 'rgba(255, 255, 255, 0.75)',
     marginTop: 2,
   },
   showroomTeaserButton: {
     backgroundColor: Colors.accent,
     paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingVertical: 7,
     borderRadius: Radius.sm,
-    marginLeft: Spacing.sm,
+    marginLeft: Spacing.xs,
   },
   showroomTeaserBtnText: {
     color: Colors.textInverse,
@@ -364,8 +367,8 @@ const styles = StyleSheet.create({
   },
   trustRow: {
     flexDirection: 'row',
-    marginHorizontal: Spacing.lg,
-    marginVertical: Spacing.sm,
+    marginHorizontal: Spacing.md,
+    marginVertical: Spacing.xs,
     backgroundColor: Colors.surfaceVariant,
     borderRadius: Radius.md,
     padding: Spacing.md,
@@ -376,7 +379,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   trustTitle: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '700',
     color: Colors.primary,
     marginTop: 4,
@@ -387,26 +390,5 @@ const styles = StyleSheet.create({
     color: Colors.textMuted,
     textAlign: 'center',
     marginTop: 1,
-  },
-  fab: {
-    position: 'absolute',
-    bottom: Spacing.md,
-    right: Spacing.md,
-    backgroundColor: Colors.primary,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: Radius.full,
-    borderWidth: 1.5,
-    borderColor: Colors.accent,
-    gap: 6,
-    ...Shadows.lg,
-    zIndex: 99,
-  },
-  fabText: {
-    color: Colors.textInverse,
-    fontSize: 13,
-    fontWeight: '700',
   },
 });

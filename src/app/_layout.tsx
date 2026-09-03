@@ -3,7 +3,6 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AppProvider } from '../store/AppContext';
-import { AIChatModal } from '../components/AIChatModal';
 
 export default function RootLayout() {
   return (
@@ -18,6 +17,7 @@ export default function RootLayout() {
           }}
         >
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="wishlist" options={{ headerShown: false }} />
           <Stack.Screen name="product/[id]" options={{ headerShown: false }} />
           <Stack.Screen name="checkout" options={{ headerShown: false }} />
           <Stack.Screen name="order-success" options={{ headerShown: false }} />
@@ -26,7 +26,6 @@ export default function RootLayout() {
           <Stack.Screen name="auth/login" options={{ headerShown: false }} />
           <Stack.Screen name="admin/dashboard" options={{ headerShown: false }} />
         </Stack>
-        <AIChatModal />
       </AppProvider>
     </SafeAreaProvider>
   );

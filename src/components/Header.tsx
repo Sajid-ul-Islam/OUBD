@@ -5,7 +5,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Spacing, Typography, Radius, Shadows } from '../constants/theme';
 import { useApp } from '../store/AppContext';
-import { APP_CONFIG } from '../constants/config';
 
 interface HeaderProps {
   title?: string;
@@ -25,55 +24,59 @@ export const Header: React.FC<HeaderProps> = ({
   const { cartCount, wishlist } = useApp();
 
   return (
-    <View style={[styles.container, { paddingTop: Math.max(insets.top, 12) }]}>
-      <View style={styles.content}>
-        {/* Left Section: Back Button or Brand Logo */}
-        <View style={styles.leftSection}>
+    <View style={[styles.wrapper, { paddingTop: Math.max(insets.top, 10) }]}>
+      <View style={styles.bar}>
+        {/* Left: Back Button or Actual Brand Logo */}
+        <View style={styles.leftContainer}>
           {showBack ? (
             <TouchableOpacity
               onPress={() => router.back()}
-              style={styles.iconButton}
+              style={styles.actionBtn}
+              hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
               accessibilityLabel="Go back"
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
-              <Ionicons name="arrow-back" size={24} color={Colors.primary} />
+              <Ionicons name="arrow-back" size={22} color={Colors.primary} />
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
               onPress={() => router.push('/(tabs)')}
-              style={styles.logoRow}
-              activeOpacity={0.8}
+              style={styles.logoBtn}
+              activeOpacity={0.85}
+              accessibilityLabel="One Ummah BD Home"
             >
-              <View style={styles.logoBadge}>
-                <Text style={styles.logoBadgeText}>OUBD</Text>
-              </View>
-              <View>
-                <Text style={styles.brandTitle}>ONE UMMAH BD</Text>
-                <Text style={styles.brandSlogan}>Spread Dawah, Look Good!</Text>
-              </View>
+              <Image
+                source={require('../../assets/images/oubd-logo.png')}
+                style={styles.logoImage}
+                resizeMode="contain"
+              />
             </TouchableOpacity>
           )}
 
-          {title && <Text style={styles.title}>{title}</Text>}
+          {title && (
+            <Text style={styles.headerTitle} numberOfLines={1}>
+              {title}
+            </Text>
+          )}
         </View>
 
-        {/* Right Section: Search, Wishlist & Cart */}
+        {/* Right Actions: Search, Wishlist (Kept in Header), Cart */}
         {showActions && (
-          <View style={styles.rightSection}>
+          <View style={styles.rightContainer}>
             {showSearch && (
               <TouchableOpacity
                 onPress={() => router.push('/search')}
-                style={styles.iconButton}
-                accessibilityLabel="Search products"
+                style={styles.actionBtn}
+                accessibilityLabel="Search"
               >
-                <Ionicons name="search-outline" size={22} color={Colors.primary} />
+                <Ionicons name="search-outline" size={21} color={Colors.primary} />
               </TouchableOpacity>
             )}
 
+            {/* Wishlist Icon in Header */}
             <TouchableOpacity
-              onPress={() => router.push('/(tabs)/wishlist')}
-              style={styles.iconButton}
-              accessibilityLabel="View Wishlist"
+              onPress={() => router.push('/wishlist')}
+              style={styles.actionBtn}
+              accessibilityLabel="Wishlist"
             >
               <Ionicons
                 name={wishlist.length > 0 ? 'heart' : 'heart-outline'}
@@ -87,12 +90,13 @@ export const Header: React.FC<HeaderProps> = ({
               )}
             </TouchableOpacity>
 
+            {/* Cart Icon in Header */}
             <TouchableOpacity
               onPress={() => router.push('/(tabs)/cart')}
-              style={styles.iconButton}
-              accessibilityLabel="View Cart"
+              style={styles.actionBtn}
+              accessibilityLabel="Cart"
             >
-              <Ionicons name="bag-handle-outline" size={22} color={Colors.primary} />
+              <Ionicons name="bag-handle-outline" size={21} color={Colors.primary} />
               {cartCount > 0 && (
                 <View style={styles.badge}>
                   <Text style={styles.badgeText}>{cartCount}</Text>
@@ -107,66 +111,49 @@ export const Header: React.FC<HeaderProps> = ({
 };
 
 const styles = StyleSheet.create({
-  container: {
+  wrapper: {
     backgroundColor: Colors.background,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
-    paddingBottom: Spacing.sm,
-    paddingHorizontal: Spacing.lg,
+    paddingHorizontal: Spacing.md,
+    paddingBottom: Spacing.xs,
+    zIndex: 20,
     ...Shadows.sm,
-    zIndex: 10,
   },
-  content: {
+  bar: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    minHeight: 48,
+    minHeight: 44,
   },
-  leftSection: {
+  leftContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
+    gap: Spacing.xs,
   },
-  logoRow: {
+  logoBtn: {
+    justifyContent: 'center',
+  },
+  logoImage: {
+    width: 140,
+    height: 32,
+  },
+  headerTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: Colors.textPrimary,
+    marginLeft: Spacing.xs,
+    flexShrink: 1,
+  },
+  rightContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm,
+    gap: 2,
   },
-  logoBadge: {
-    backgroundColor: Colors.primary,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: Radius.xs,
-  },
-  logoBadgeText: {
-    color: Colors.textInverse,
-    fontWeight: '800',
-    fontSize: 13,
-    letterSpacing: 1,
-  },
-  brandTitle: {
-    fontSize: 14,
-    fontWeight: '800',
-    color: Colors.primary,
-    letterSpacing: 0.5,
-  },
-  brandSlogan: {
-    fontSize: 10,
-    color: Colors.accent,
-    fontWeight: '600',
-  },
-  title: {
-    ...Typography.title,
-    marginLeft: Spacing.sm,
-  },
-  rightSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  iconButton: {
-    width: 40,
-    height: 40,
+  actionBtn: {
+    width: 38,
+    height: 38,
     borderRadius: Radius.full,
     alignItems: 'center',
     justifyContent: 'center',
@@ -174,8 +161,8 @@ const styles = StyleSheet.create({
   },
   badge: {
     position: 'absolute',
-    top: 4,
-    right: 4,
+    top: 3,
+    right: 3,
     backgroundColor: Colors.accent,
     borderRadius: Radius.full,
     minWidth: 16,
@@ -187,6 +174,6 @@ const styles = StyleSheet.create({
   badgeText: {
     color: Colors.textInverse,
     fontSize: 9,
-    fontWeight: '700',
+    fontWeight: '800',
   },
 });

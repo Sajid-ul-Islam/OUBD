@@ -1,9 +1,16 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import React, { useRef } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  Animated,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Product } from '../types';
-import { Colors, Spacing, Typography, Radius, Shadows } from '../constants/theme';
+import { Colors, Spacing, Radius, Shadows } from '../constants/theme';
 import { useApp } from '../store/AppContext';
 import { APP_CONFIG } from '../constants/config';
 
@@ -16,10 +23,28 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { toggleWishlist, isInWishlist, addToCart } = useApp();
   const isWished = isInWishlist(product.id);
 
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
   const discountPercent =
     product.compareAtPrice && product.compareAtPrice > product.price
       ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
       : null;
+
+  const handlePressIn = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 0.96,
+      useNativeDriver: true,
+      speed: 20,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      useNativeDriver: true,
+      friction: 4,
+    }).start();
+  };
 
   const handlePress = () => {
     router.push(`/product/${product.id}`);
@@ -32,108 +57,116 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const imageUrl = product.images.length > 0 ? product.images[0] : null;
 
   return (
-    <TouchableOpacity
-      style={styles.card}
-      onPress={handlePress}
-      activeOpacity={0.88}
-      accessibilityLabel={`View ${product.title}`}
-    >
-      {/* Image Container */}
-      <View style={styles.imageContainer}>
-        {imageUrl ? (
-          <Image
-            source={{ uri: imageUrl }}
-            style={styles.image}
-            resizeMode="cover"
-          />
-        ) : (
-          <View style={styles.fallbackImage}>
-            <Ionicons name="shirt-outline" size={40} color={Colors.textMuted} />
-          </View>
-        )}
+    <Animated.View style={[styles.wrapper, { transform: [{ scale: scaleAnim }] }]}>
+      <TouchableOpacity
+        style={styles.card}
+        onPress={handlePress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        activeOpacity={0.94}
+        accessibilityLabel={`View ${product.title}`}
+      >
+        {/* Highlighted Photo Showcase Frame */}
+        <View style={styles.imageFrame}>
+          {imageUrl ? (
+            <Image
+              source={{ uri: imageUrl }}
+              style={styles.image}
+              resizeMode="cover"
+            />
+          ) : (
+            <View style={styles.fallbackImage}>
+              <Ionicons name="shirt-outline" size={38} color={Colors.textMuted} />
+            </View>
+          )}
 
-        {/* Discount Badge */}
-        {discountPercent ? (
-          <View style={styles.discountBadge}>
-            <Text style={styles.discountText}>-{discountPercent}%</Text>
-          </View>
-        ) : product.isNew ? (
-          <View style={styles.newBadge}>
-            <Text style={styles.newBadgeText}>NEW</Text>
-          </View>
-        ) : null}
+          {/* Floating Badges */}
+          {discountPercent ? (
+            <View style={styles.discountBadge}>
+              <Text style={styles.discountText}>-{discountPercent}%</Text>
+            </View>
+          ) : product.isNew ? (
+            <View style={styles.newBadge}>
+              <Text style={styles.newBadgeText}>NEW</Text>
+            </View>
+          ) : null}
 
-        {/* Wishlist Heart Toggle */}
-        <TouchableOpacity
-          style={styles.wishlistButton}
-          onPress={() => toggleWishlist(product)}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-          accessibilityLabel={isWished ? 'Remove from wishlist' : 'Add to wishlist'}
-        >
-          <Ionicons
-            name={isWished ? 'heart' : 'heart-outline'}
-            size={18}
-            color={isWished ? Colors.sale : Colors.primary}
-          />
-        </TouchableOpacity>
-      </View>
-
-      {/* Info Container */}
-      <View style={styles.info}>
-        <Text style={styles.category}>{product.category.toUpperCase()}</Text>
-        <Text style={styles.title} numberOfLines={2}>
-          {product.title}
-        </Text>
-
-        {/* Rating Row */}
-        <View style={styles.ratingRow}>
-          <Ionicons name="star" size={13} color={Colors.warning} />
-          <Text style={styles.ratingText}>{product.rating.toFixed(1)}</Text>
-          <Text style={styles.reviewCount}>({product.reviewCount})</Text>
-        </View>
-
-        {/* Price & Action Row */}
-        <View style={styles.bottomRow}>
-          <View style={styles.priceContainer}>
-            <Text style={styles.price}>
-              {APP_CONFIG.CURRENCY_SYMBOL} {product.price.toLocaleString()}
-            </Text>
-            {product.compareAtPrice && product.compareAtPrice > product.price ? (
-              <Text style={styles.comparePrice}>
-                {APP_CONFIG.CURRENCY_SYMBOL} {product.compareAtPrice.toLocaleString()}
-              </Text>
-            ) : null}
-          </View>
-
+          {/* Wishlist Heart Toggle */}
           <TouchableOpacity
-            style={styles.addButton}
-            onPress={handleQuickAdd}
-            accessibilityLabel={`Add ${product.title} to cart`}
+            style={styles.wishlistButton}
+            onPress={() => toggleWishlist(product)}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            accessibilityLabel={isWished ? 'Remove from wishlist' : 'Add to wishlist'}
           >
-            <Ionicons name="add" size={20} color={Colors.textInverse} />
+            <Ionicons
+              name={isWished ? 'heart' : 'heart-outline'}
+              size={17}
+              color={isWished ? Colors.sale : Colors.primary}
+            />
           </TouchableOpacity>
         </View>
-      </View>
-    </TouchableOpacity>
+
+        {/* Product Information */}
+        <View style={styles.info}>
+          <Text style={styles.category}>{product.category.toUpperCase()}</Text>
+          <Text style={styles.title} numberOfLines={2}>
+            {product.title}
+          </Text>
+
+          {/* Rating */}
+          <View style={styles.ratingRow}>
+            <Ionicons name="star" size={12} color={Colors.warning} />
+            <Text style={styles.ratingText}>{product.rating.toFixed(1)}</Text>
+            <Text style={styles.reviewCount}>({product.reviewCount})</Text>
+          </View>
+
+          {/* Price & Add CTA */}
+          <View style={styles.bottomRow}>
+            <View style={styles.priceCol}>
+              <Text style={styles.price}>
+                {APP_CONFIG.CURRENCY_SYMBOL} {product.price.toLocaleString()}
+              </Text>
+              {product.compareAtPrice && product.compareAtPrice > product.price ? (
+                <Text style={styles.comparePrice}>
+                  {APP_CONFIG.CURRENCY_SYMBOL} {product.compareAtPrice.toLocaleString()}
+                </Text>
+              ) : null}
+            </View>
+
+            <TouchableOpacity
+              style={styles.addButton}
+              onPress={handleQuickAdd}
+              activeOpacity={0.8}
+              accessibilityLabel={`Add ${product.title} to cart`}
+            >
+              <Ionicons name="add" size={18} color={Colors.textInverse} />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </TouchableOpacity>
+    </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
-  card: {
+  wrapper: {
     flex: 1,
+    marginBottom: Spacing.sm,
+  },
+  card: {
     backgroundColor: Colors.background,
     borderRadius: Radius.md,
     overflow: 'hidden',
-    marginBottom: Spacing.md,
     borderWidth: 1,
     borderColor: Colors.border,
     ...Shadows.sm,
   },
-  imageContainer: {
+  imageFrame: {
     width: '100%',
     aspectRatio: 1,
     backgroundColor: Colors.surfaceVariant,
     position: 'relative',
+    overflow: 'hidden',
   },
   image: {
     width: '100%',
@@ -153,11 +186,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     paddingVertical: 3,
     borderRadius: Radius.xs,
+    ...Shadows.sm,
   },
   discountText: {
     color: Colors.textInverse,
     fontSize: 10,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   newBadge: {
     position: 'absolute',
@@ -167,19 +201,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     paddingVertical: 3,
     borderRadius: Radius.xs,
+    ...Shadows.sm,
   },
   newBadgeText: {
     color: Colors.textInverse,
     fontSize: 10,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   wishlistButton: {
     position: 'absolute',
     top: 8,
     right: 8,
-    backgroundColor: 'rgba(255,255,255,0.9)',
-    width: 32,
-    height: 32,
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    width: 30,
+    height: 30,
     borderRadius: Radius.full,
     alignItems: 'center',
     justifyContent: 'center',
@@ -188,21 +223,20 @@ const styles = StyleSheet.create({
   info: {
     padding: Spacing.sm,
     justifyContent: 'space-between',
-    flex: 1,
   },
   category: {
-    fontSize: 10,
-    color: Colors.textMuted,
-    fontWeight: '600',
-    letterSpacing: 0.5,
+    fontSize: 9,
+    color: Colors.accent,
+    fontWeight: '700',
+    letterSpacing: 0.6,
     marginBottom: 2,
   },
   title: {
     fontSize: 13,
     fontWeight: '600',
     color: Colors.textPrimary,
-    lineHeight: 18,
-    minHeight: 36,
+    lineHeight: 17,
+    minHeight: 34,
   },
   ratingRow: {
     flexDirection: 'row',
@@ -212,26 +246,28 @@ const styles = StyleSheet.create({
   },
   ratingText: {
     fontSize: 11,
-    fontWeight: '600',
+    fontWeight: '700',
     color: Colors.textPrimary,
   },
   reviewCount: {
-    fontSize: 11,
+    fontSize: 10,
     color: Colors.textMuted,
   },
   bottomRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: Spacing.xs,
+    marginTop: 6,
     paddingTop: 4,
+    borderTopWidth: 1,
+    borderTopColor: Colors.surfaceVariant,
   },
-  priceContainer: {
+  priceCol: {
     flex: 1,
   },
   price: {
     fontSize: 14,
-    fontWeight: '700',
+    fontWeight: '800',
     color: Colors.primary,
   },
   comparePrice: {
@@ -241,10 +277,11 @@ const styles = StyleSheet.create({
   },
   addButton: {
     backgroundColor: Colors.accent,
-    width: 32,
-    height: 32,
-    borderRadius: Radius.sm,
+    width: 30,
+    height: 30,
+    borderRadius: Radius.xs,
     alignItems: 'center',
     justifyContent: 'center',
+    ...Shadows.sm,
   },
 });
