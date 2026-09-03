@@ -66,3 +66,14 @@ A structured record of engineering iterations, technical decisions, code impleme
 
 ### Iteration 5 — Verification & Auditing
 - **Executed**: Automated test runner verifying catalog validity, cart calculations, coupon logic, order generation, and admin RBAC checks. Zero TypeScript errors.
+
+---
+
+### Iteration 6 — Edge-to-Edge Android, Startup Animation, Notification Center & Dynamic Category Showcases
+- **Investigated**: Android status bar blank area, user request for brand startup animation, duplicate cart icon in header, and need for dynamic category showcases with authentic cover photos.
+- **Implemented**:
+  - `app.json` & `_layout.tsx`: Configured `androidStatusBar` (`translucent: true`, `backgroundColor: "#00000000"`) and `RNStatusBar` for true edge-to-edge Android display, removing top blank gap.
+  - `StartupAnimation.tsx`: Created animated launch screen with official OUBD app icon, pulsing ambient emerald glow, white brand wordmark, and spring/fade transitions.
+  - `Header.tsx` & `NotificationModal.tsx`: Replaced redundant Cart icon in header with an unread-badged Notification Bell triggering a 3-tier Notification Center (Campaign Deals, Courier Order Tracking, Sunnah & Jummah Reminders). Kept Wishlist in header.
+  - `CategoryShowcaseSection.tsx` & `(tabs)/index.tsx`: Built dynamic category showcase modules featuring authentic cover photos for Royal Panjabi & Thobes, Dawah T-Shirts, Denim Joggers, Docker Caps, and Artisanal Attars with horizontal snapping product carousels.
+- **Verification**: 23/23 tests passing in `scripts/run-tests.js`, 0 TypeScript errors, Metro server active on port 8083.
