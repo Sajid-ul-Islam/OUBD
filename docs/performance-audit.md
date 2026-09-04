@@ -24,3 +24,11 @@
 - **Tree-Shaking**: Direct imports from `@expo/vector-icons` and focused utility libraries keep bundle sizes lightweight.
 - **State Granularity**: Cart and Wishlist modifications trigger targeted updates in `AppContext` rather than full tree re-renders.
 - **Startup Time**: App initial render avoids heavy synchronous processing on the JS thread.
+
+---
+
+## 4. Motion & Media Performance Strategy
+
+- **Native Driver Animations**: Hero motion loops, startup intro transitions, and card press scaling strictly leverage `useNativeDriver: true`, ensuring zero 60fps drops on mid-range Android chipsets.
+- **Poster Thumbnailing**: Social reels and stories utilize lightweight static preview posters with dark scrim overlays rather than rendering raw unbuffered MP4 streams simultaneously.
+- **Horizontal Paging Deceleration**: Category and Reels carousels configure `decelerationRate="fast"` for smooth native Android fling behavior.

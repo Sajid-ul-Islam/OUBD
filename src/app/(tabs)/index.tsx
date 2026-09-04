@@ -14,8 +14,11 @@ import { BannerCarousel } from '../../components/BannerCarousel';
 import { CategoryPills } from '../../components/CategoryPills';
 import { ProductCard } from '../../components/ProductCard';
 import { CategoryShowcaseSection } from '../../components/CategoryShowcaseSection';
+import { HeroMotionExperience } from '../../components/HeroMotionExperience';
+import { ShoppableSocialSection } from '../../components/ShoppableSocialSection';
 import { AnimatedFadeIn } from '../../components/AnimatedFadeIn';
 import { productService } from '../../services/products/productService';
+import { socialService } from '../../services/social/socialService';
 import { Product, Banner } from '../../types';
 import { Colors, Spacing, Radius, Shadows } from '../../constants/theme';
 
@@ -173,6 +176,11 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </AnimatedFadeIn>
 
+        {/* Brand Motion Hero Experience */}
+        <AnimatedFadeIn delay={120} duration={380}>
+          <HeroMotionExperience />
+        </AnimatedFadeIn>
+
         {/* Hero Campaign Banners Carousel */}
         {banners.length > 0 && (
           <AnimatedFadeIn delay={150} duration={400}>
@@ -235,6 +243,11 @@ export default function HomeScreen() {
           })}
         </View>
 
+        {/* Shoppable Social & Ummah Community Feed */}
+        <AnimatedFadeIn delay={220} duration={400}>
+          <ShoppableSocialSection />
+        </AnimatedFadeIn>
+
         {/* Interactive Filter Grid */}
         <AnimatedFadeIn delay={250} duration={400}>
           <View style={styles.sectionHeader}>
@@ -269,6 +282,35 @@ export default function HomeScreen() {
             </View>
           ))}
         </View>
+
+        {/* Brand Heritage & Halal Story */}
+        <AnimatedFadeIn delay={280} duration={400}>
+          <View style={styles.brandStoryCard}>
+            <View style={styles.brandStoryHeader}>
+              <View style={styles.greenPill}>
+                <Text style={styles.greenPillText}>MODEST HERITAGE</Text>
+              </View>
+              <Text style={styles.brandStoryTitle}>Spread Dawah, Look Good</Text>
+            </View>
+            <Text style={styles.brandStoryText}>
+              One Ummah BD was founded to bridge faith, modesty, and modern urban fashion. Every thread is chosen with purpose — from 100% fine combed cotton and ethical stitching to non-alcoholic Attars.
+            </Text>
+            <View style={styles.brandStoryBadges}>
+              <View style={styles.storyBadgeItem}>
+                <Ionicons name="sparkles" size={14} color={Colors.accent} />
+                <Text style={styles.storyBadgeText}>200+ GSM Heavyweight</Text>
+              </View>
+              <View style={styles.storyBadgeItem}>
+                <Ionicons name="checkmark-done-circle" size={14} color={Colors.accent} />
+                <Text style={styles.storyBadgeText}>Azo-Free & Skin-Safe</Text>
+              </View>
+              <View style={styles.storyBadgeItem}>
+                <Ionicons name="moon" size={14} color={Colors.accent} />
+                <Text style={styles.storyBadgeText}>100% Sunnah Silhouette</Text>
+              </View>
+            </View>
+          </View>
+        </AnimatedFadeIn>
 
         {/* Showrooms Teaser Banner */}
         <AnimatedFadeIn delay={300} duration={400}>
@@ -310,6 +352,32 @@ export default function HomeScreen() {
             <Ionicons name="repeat" size={18} color={Colors.accent} />
             <Text style={styles.trustTitle}>Easy Exchange</Text>
             <Text style={styles.trustSub}>7-day hassle-free</Text>
+          </View>
+        </View>
+
+        {/* Official Social Media Community Footer Banner */}
+        <View style={styles.socialFooterCard}>
+          <Text style={styles.socialFooterTitle}>Follow One Ummah BD</Text>
+          <Text style={styles.socialFooterSubtitle}>
+            Get first access to drops, restocks & styling reels
+          </Text>
+          <View style={styles.socialFooterBtnRow}>
+            <TouchableOpacity
+              style={[styles.socialFooterBtn, { backgroundColor: '#1877F2' }]}
+              onPress={() => socialService.openSocialProfile('facebook')}
+              activeOpacity={0.88}
+            >
+              <Ionicons name="logo-facebook" size={16} color={Colors.textInverse} />
+              <Text style={styles.socialFooterBtnText}>Facebook Page</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.socialFooterBtn, { backgroundColor: '#E1306C' }]}
+              onPress={() => socialService.openSocialProfile('instagram')}
+              activeOpacity={0.88}
+            >
+              <Ionicons name="logo-instagram" size={16} color={Colors.textInverse} />
+              <Text style={styles.socialFooterBtnText}>Instagram</Text>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -490,5 +558,109 @@ const styles = StyleSheet.create({
     color: Colors.textMuted,
     textAlign: 'center',
     marginTop: 1,
+  },
+  brandStoryCard: {
+    marginHorizontal: Spacing.md,
+    marginVertical: Spacing.sm,
+    backgroundColor: Colors.surface,
+    borderRadius: Radius.lg,
+    padding: Spacing.lg,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    ...Shadows.sm,
+  },
+  brandStoryHeader: {
+    marginBottom: Spacing.xs,
+  },
+  greenPill: {
+    alignSelf: 'flex-start',
+    backgroundColor: Colors.accentSubtle,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: Radius.xs,
+    marginBottom: 4,
+  },
+  greenPillText: {
+    color: Colors.accent,
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 0.8,
+  },
+  brandStoryTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: Colors.primary,
+  },
+  brandStoryText: {
+    fontSize: 12,
+    color: Colors.textSecondary,
+    lineHeight: 18,
+    marginTop: 2,
+    marginBottom: Spacing.sm,
+  },
+  brandStoryBadges: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Spacing.xs,
+    paddingTop: Spacing.xs,
+    borderTopWidth: 1,
+    borderTopColor: Colors.border,
+  },
+  storyBadgeItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.background,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: Radius.full,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    gap: 4,
+  },
+  storyBadgeText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: Colors.textPrimary,
+  },
+  socialFooterCard: {
+    marginHorizontal: Spacing.md,
+    marginTop: Spacing.sm,
+    marginBottom: Spacing.md,
+    backgroundColor: Colors.primary,
+    borderRadius: Radius.lg,
+    padding: Spacing.lg,
+    alignItems: 'center',
+    ...Shadows.md,
+  },
+  socialFooterTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: Colors.textInverse,
+  },
+  socialFooterSubtitle: {
+    fontSize: 11,
+    color: 'rgba(255, 255, 255, 0.75)',
+    marginTop: 2,
+    marginBottom: Spacing.md,
+    textAlign: 'center',
+  },
+  socialFooterBtnRow: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+    width: '100%',
+  },
+  socialFooterBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    borderRadius: Radius.md,
+    gap: 6,
+  },
+  socialFooterBtnText: {
+    color: Colors.textInverse,
+    fontSize: 12,
+    fontWeight: '700',
   },
 });

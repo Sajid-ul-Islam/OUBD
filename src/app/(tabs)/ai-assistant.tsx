@@ -9,10 +9,12 @@ import {
   KeyboardAvoidingView,
   Platform,
   Animated,
+  Linking,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Header } from '../../components/Header';
 import { Colors, Spacing, Radius, Shadows } from '../../constants/theme';
+import { APP_CONFIG } from '../../constants/config';
 
 interface ChatMessage {
   id: string;
@@ -122,7 +124,7 @@ export default function AIAssistantScreen() {
         style={styles.keyboardView}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        {/* Assistant Header Banner */}
+        {/* Assistant Header Banner with Human Escalation */}
         <View style={styles.assistantStatusBanner}>
           <View style={styles.avatarGlow}>
             <Ionicons name="sparkles" size={16} color={Colors.textInverse} />
@@ -133,7 +135,38 @@ export default function AIAssistantScreen() {
               <View style={styles.activeDot} />
               <Text style={styles.activeLabel}>Live Online</Text>
             </View>
-            <Text style={styles.assistantSub}>Trained on One Ummah BD modest catalog & sizing</Text>
+            <Text style={styles.assistantSub}>Trained on One Ummah BD catalog & sizing</Text>
+          </View>
+
+          {/* Quick Actions: Human WhatsApp Escalation & Clear History */}
+          <View style={styles.bannerActions}>
+            <TouchableOpacity
+              style={styles.humanBtn}
+              onPress={() => Linking.openURL(APP_CONFIG.SUPPORT_WHATSAPP)}
+              activeOpacity={0.85}
+              accessibilityLabel="Chat with Human Support on WhatsApp"
+            >
+              <Ionicons name="logo-whatsapp" size={15} color={Colors.textInverse} />
+              <Text style={styles.humanBtnText}>Human</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.resetBtn}
+              onPress={() => {
+                setMessages([
+                  {
+                    id: `m-${Date.now()}`,
+                    sender: 'bot',
+                    text: 'Chat history cleared. Assalamu Alaikum! How can I assist you with your modest wear shopping today?',
+                    time: 'Just now',
+                  },
+                ]);
+              }}
+              activeOpacity={0.75}
+              accessibilityLabel="Reset conversation"
+            >
+              <Ionicons name="refresh-outline" size={16} color={Colors.textSecondary} />
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -294,6 +327,34 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: Colors.textMuted,
     marginTop: 1,
+  },
+  bannerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  humanBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#25D366', // WhatsApp Green
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderRadius: Radius.sm,
+    gap: 4,
+    ...Shadows.sm,
+  },
+  humanBtnText: {
+    color: Colors.textInverse,
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  resetBtn: {
+    width: 28,
+    height: 28,
+    borderRadius: Radius.full,
+    backgroundColor: Colors.surfaceVariant,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   chatContainer: {
     flex: 1,

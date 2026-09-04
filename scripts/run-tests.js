@@ -271,6 +271,35 @@ runTest('Startup animation and edge-to-edge status bar configured in app layout'
   assert(layoutFile.includes('translucent'), 'Missing translucent status bar configuration');
 });
 
+// 10. Official Social Channels & Shoppable Commerce
+console.log('\n--- Test Suite 10: Official Social Channels & Shoppable Commerce ---');
+const socialFile = fs.readFileSync(path.join(__dirname, '..', 'src', 'services', 'social', 'socialService.ts'), 'utf8');
+
+runTest('Contains official Facebook and Instagram URLs for One Ummah BD', () => {
+  assert(socialFile.includes('https://www.facebook.com/oneummahbd'), 'Missing official Facebook URL');
+  assert(socialFile.includes('https://www.instagram.com/oneummahbd/?hl=en'), 'Missing official Instagram URL');
+});
+
+runTest('Shoppable reels and stories map to authentic catalog products', () => {
+  assert(socialFile.includes('taggedProduct'), 'Missing tagged products on reels');
+  assert(socialFile.includes('8646731792463'), 'Missing Panjabi tagged SKU');
+  assert(socialFile.includes('8975892349007'), 'Missing Dawah T-Shirt tagged SKU');
+});
+
+// 11. Customer UI Safety & Restricted Control Removal
+console.log('\n--- Test Suite 11: Customer UI Safety & Restricted Controls ---');
+const accountFile = fs.readFileSync(path.join(__dirname, '..', 'src', 'app', '(tabs)', 'account.tsx'), 'utf8');
+
+runTest('Ensures developer admin switcher is completely removed from customer view', () => {
+  assert(!accountFile.includes('Demo: Switch to Admin Role'), 'Found developer admin switch in customer account screen');
+  assert(!accountFile.includes('Developer & Prototype Controls'), 'Found developer controls header in customer account screen');
+});
+
+runTest('Account screen contains Notification Preferences and Official Community sections', () => {
+  assert(accountFile.includes('Notification Preferences'), 'Missing Notification Preferences in account screen');
+  assert(accountFile.includes('Official Social Community'), 'Missing Official Social Community in account screen');
+});
+
 console.log('\n======================================================');
 console.log(`Results: ${testsPassed} Passed, ${testsFailed} Failed`);
 console.log('======================================================\n');

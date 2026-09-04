@@ -43,13 +43,14 @@ OUBD/
 │   ├── app/                     # Expo Router file-based route definitions
 │   │   ├── (tabs)/              # Persistent bottom tab navigation
 │   │   │   ├── _layout.tsx      # Tab bar configuration & custom icons
-│   │   │   ├── index.tsx        # Homepage (feed, hero carousel, categories, promos)
+│   │   │   ├── index.tsx        # Homepage (motion hero, categories, shoppable reels)
 │   │   │   ├── categories.tsx   # Category browse screen
-│   │   │   ├── wishlist.tsx     # Saved items with move-to-cart
+│   │   │   ├── ai-assistant.tsx # Dedicated AI shopping & customer support tab
 │   │   │   ├── cart.tsx         # Cart items, coupon, delivery zone
 │   │   │   └── account.tsx      # Customer portal, order history, showrooms
 │   │   ├── product/[id].tsx     # Product Details Page (PDP)
 │   │   ├── checkout.tsx         # Delivery details, payment method selection
+│   │   ├── wishlist.tsx         # Standalone wishlist screen linked from header
 │   │   ├── order-success.tsx    # Order confirmation & tracking summary
 │   │   ├── store-locator.tsx    # Bangladesh physical showrooms
 │   │   ├── search.tsx           # Instant keyword & category search
@@ -57,14 +58,19 @@ OUBD/
 │   │   │   └── login.tsx        # Google, Facebook, and Phone OTP authentication
 │   │   ├── admin/
 │   │   │   └── dashboard.tsx    # Role-gated admin control panel
-│   │   └── _layout.tsx          # Root Stack layout, Theme & Context providers
+│   │   └── _layout.tsx          # Root Stack layout, Translucent status bar & Startup intro
 │   ├── components/              # Atomic, reusable design system components
-│   │   ├── Header.tsx           # App header with logo & badges
+│   │   ├── Header.tsx           # App header with logo, notification bell & wishlist
+│   │   ├── NotificationModal.tsx# 3-tier notification center
+│   │   ├── NotificationPermissionModal.tsx # Opt-in value permission dialog
+│   │   ├── StartupAnimation.tsx # Brand launch animation overlay
+│   │   ├── HeroMotionExperience.tsx # Motion hero section with ambient video loop
+│   │   ├── ShoppableSocialSection.tsx # Stories, shoppable reels & social buttons
+│   │   ├── CategoryShowcaseSection.tsx # Category cover photos & product carousels
 │   │   ├── ProductCard.tsx      # Grid product card with wishlist & add actions
 │   │   ├── BannerCarousel.tsx   # Auto-advancing promotional banners
 │   │   ├── CategoryPills.tsx    # Horizontal filter selector
 │   │   ├── ShowroomCard.tsx     # Store locator card with direct dialing
-│   │   ├── AIChatModal.tsx      # Interactive AI shopping assistant
 │   │   └── EmptyState.tsx       # Standard empty & error states
 │   ├── constants/               # Colors, typography, spacing, theme tokens
 │   ├── types/                   # TypeScript interfaces & domain models
@@ -73,7 +79,8 @@ OUBD/
 │   │   ├── auth/                # Authentication contracts & implementation
 │   │   ├── products/            # Catalog, collections, search & filters
 │   │   ├── orders/              # Checkout, coupon validation, order tracking
-│   │   └── mock/                # 250+ authentic products extracted from live store
+│   │   ├── social/              # Social media, shoppable reels & story contracts
+│   │   └── mock/                # Authentic products extracted from live store
 │   └── store/                   # Global state (Cart, Wishlist, User session)
 ```
 

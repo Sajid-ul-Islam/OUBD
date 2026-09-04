@@ -14,12 +14,15 @@ import { Ionicons } from '@expo/vector-icons';
 import { Header } from '../../components/Header';
 import { useApp } from '../../store/AppContext';
 import { authService } from '../../services/auth/authService';
+import { socialService } from '../../services/social/socialService';
+import { NotificationPermissionModal } from '../../components/NotificationPermissionModal';
 import { Colors, Spacing, Radius, Shadows } from '../../constants/theme';
 import { APP_CONFIG } from '../../constants/config';
 
 export default function AccountScreen() {
   const router = useRouter();
   const { user, isAuthenticated, setUser, logout, orders } = useApp();
+  const [showNotificationPrefs, setShowNotificationPrefs] = useState(false);
 
   const handleWhatsAppSupport = () => {
     Linking.openURL(APP_CONFIG.SUPPORT_WHATSAPP).catch(() => {
@@ -185,34 +188,85 @@ export default function AccountScreen() {
             </View>
             <Ionicons name="chevron-forward" size={18} color={Colors.textMuted} />
           </TouchableOpacity>
-        </View>
 
-        {/* Demo Switch for Admin Evaluation */}
-        <View style={styles.menuSection}>
-          <Text style={styles.sectionHeader}>Developer & Prototype Controls</Text>
           <TouchableOpacity
             style={styles.menuItem}
-            onPress={handleAdminToggle}
+            onPress={() => setShowNotificationPrefs(true)}
             activeOpacity={0.7}
           >
             <View style={styles.menuLeft}>
-              <Ionicons name="settings-outline" size={20} color={Colors.textSecondary} />
-              <Text style={styles.menuLabel}>
-                {user?.role === 'admin' ? 'Open Admin Control Panel' : 'Demo: Switch to Admin Role'}
-              </Text>
+              <Ionicons name="notifications-outline" size={20} color={Colors.accent} />
+              <Text style={styles.menuLabel}>Notification Preferences</Text>
             </View>
             <Ionicons name="chevron-forward" size={18} color={Colors.textMuted} />
           </TouchableOpacity>
         </View>
 
+        {/* Official Brand Social Channels */}
+        <View style={styles.menuSection}>
+          <Text style={styles.sectionHeader}>Official Social Community</Text>
+          <Text style={styles.sectionSubHeader}>Connect with 600K+ brothers across Bangladesh</Text>
+
+          <TouchableOpacity
+            style={styles.socialCard}
+            onPress={() => socialService.openSocialProfile('facebook')}
+            activeOpacity={0.88}
+          >
+            <View style={[styles.socialIconBox, { backgroundColor: '#1877F2' }]}>
+              <Ionicons name="logo-facebook" size={22} color={Colors.textInverse} />
+            </View>
+            <View style={styles.socialCardText}>
+              <View style={styles.socialTitleRow}>
+                <Text style={styles.socialName}>One Ummah BD on Facebook</Text>
+                <Ionicons name="checkmark-circle" size={14} color="#1877F2" />
+              </View>
+              <Text style={styles.socialMeta}>485K Followers • Official Page & Live Updates</Text>
+            </View>
+            <Ionicons name="open-outline" size={18} color={Colors.textMuted} />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.socialCard}
+            onPress={() => socialService.openSocialProfile('instagram')}
+            activeOpacity={0.88}
+          >
+            <View style={[styles.socialIconBox, { backgroundColor: '#E1306C' }]}>
+              <Ionicons name="logo-instagram" size={22} color={Colors.textInverse} />
+            </View>
+            <View style={styles.socialCardText}>
+              <View style={styles.socialTitleRow}>
+                <Text style={styles.socialName}>@oneummahbd on Instagram</Text>
+                <Ionicons name="checkmark-circle" size={14} color="#E1306C" />
+              </View>
+              <Text style={styles.socialMeta}>135K Followers • Daily Styling & Lookbooks</Text>
+            </View>
+            <Ionicons name="open-outline" size={18} color={Colors.textMuted} />
+          </TouchableOpacity>
+        </View>
+
+        {/* Brand Mission & Values */}
+        <View style={styles.brandMissionCard}>
+          <Text style={styles.brandMissionBadge}>OUR BRAND MISSION</Text>
+          <Text style={styles.brandMissionTitle}>"Spread Dawah, Look Good!"</Text>
+          <Text style={styles.brandMissionBody}>
+            One Ummah BD was founded on the vision of elevating Islamic lifestyle and Sunnah dressing into contemporary, premium fashion. Every garment is crafted with modest silhouettes, breathable combed cotton, and strict non-alcoholic principles.
+          </Text>
+        </View>
+
         {/* App Info Footer */}
         <View style={styles.footer}>
-          <Text style={styles.versionText}>One Ummah BD Mobile App v1.0.0 (Production Prototype)</Text>
+          <Text style={styles.versionText}>One Ummah BD Mobile App v1.0.0 (Production)</Text>
           <Text style={styles.copyrightText}>© 2026 One Ummah BD. All rights reserved.</Text>
         </View>
 
         <View style={{ height: 60 }} />
       </ScrollView>
+
+      {/* Notification Preferences Modal */}
+      <NotificationPermissionModal
+        visible={showNotificationPrefs}
+        onClose={() => setShowNotificationPrefs(false)}
+      />
     </View>
   );
 }
@@ -441,6 +495,74 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     color: Colors.textPrimary,
+  },
+  sectionSubHeader: {
+    fontSize: 11,
+    color: Colors.textMuted,
+    marginBottom: Spacing.sm,
+  },
+  socialCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.surface,
+    padding: Spacing.md,
+    borderRadius: Radius.md,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    marginBottom: 8,
+    gap: Spacing.md,
+    ...Shadows.sm,
+  },
+  socialIconBox: {
+    width: 42,
+    height: 42,
+    borderRadius: Radius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  socialCardText: {
+    flex: 1,
+  },
+  socialTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  socialName: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: Colors.textPrimary,
+  },
+  socialMeta: {
+    fontSize: 11,
+    color: Colors.textMuted,
+    marginTop: 2,
+  },
+  brandMissionCard: {
+    backgroundColor: Colors.surfaceVariant,
+    padding: Spacing.lg,
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    marginBottom: Spacing.md,
+  },
+  brandMissionBadge: {
+    fontSize: 9,
+    fontWeight: '800',
+    color: Colors.accent,
+    letterSpacing: 1,
+    marginBottom: 4,
+  },
+  brandMissionTitle: {
+    fontSize: 15,
+    fontWeight: '800',
+    color: Colors.primary,
+    marginBottom: 6,
+  },
+  brandMissionBody: {
+    fontSize: 12,
+    color: Colors.textSecondary,
+    lineHeight: 18,
   },
   footer: {
     alignItems: 'center',

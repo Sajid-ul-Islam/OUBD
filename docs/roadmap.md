@@ -6,19 +6,23 @@ A phased master roadmap guiding the transition from this functional MVP prototyp
 
 ## Phase 1 — Prototype & Client Showcase (Current Phase)
 - [x] Comprehensive brand analysis and visual identity replication.
-- [x] Real catalog extraction (250+ products, categories, pricing, variants).
+- [x] Real catalog extraction (77+ rich products, categories, pricing, variants).
 - [x] Full customer shopping journey (Home, Search, PDP, Cart, Checkout, Confirmation).
 - [x] Bangladesh-specific checkout flow (COD, bKash/Nagad mock, Dhaka/Outside Dhaka shipping).
 - [x] Authentication flows (Phone OTP UX, Google, Facebook).
 - [x] Interactive Showroom Locator for all 15+ Bangladesh outlets with one-tap calling.
-- [x] In-app AI Shopping Assistant ("Ummah Bot").
-- [x] Hidden role-based Admin dashboard for store managers.
-- [x] Exhaustive architectural and audit documentation.
+- [x] In-app AI Shopping Assistant with live human WhatsApp escalation.
+- [x] True edge-to-edge Android status bar integration and startup brand animation.
+- [x] Official brand social channels (Facebook & Instagram) and Shoppable Reels integration.
+- [x] Value-first notification opt-in journey with customizable category preferences.
+- [x] Customer UI cleanup: Complete isolation and removal of developer admin switches.
+- [x] Exhaustive architectural, design system, and social integration documentation.
 
 ---
 
 ## Phase 2 — Production Backend Integration
 - **Target Backend Selection**: Connect to Shopify Storefront API, WooCommerce, or custom Laravel REST API.
+- **Meta Graph API Provisioning**: Link official Instagram Graph API & webhooks for automatic reel synchronization.
 - **SMS Gateway Provisioning**: Integrate Bangladeshi SMS gateway (SSL Wireless, Greenweb, or Twilio) for real SMS OTP delivery.
 - **Payment Gateway Integration**: Hook live bKash Merchant API, Nagad Direct, SSLCommerz, or Shurjopay SDK.
 - **User Account Sync**: Sync customer addresses, saved carts, and historical orders.

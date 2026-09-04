@@ -77,3 +77,19 @@ A structured record of engineering iterations, technical decisions, code impleme
   - `Header.tsx` & `NotificationModal.tsx`: Replaced redundant Cart icon in header with an unread-badged Notification Bell triggering a 3-tier Notification Center (Campaign Deals, Courier Order Tracking, Sunnah & Jummah Reminders). Kept Wishlist in header.
   - `CategoryShowcaseSection.tsx` & `(tabs)/index.tsx`: Built dynamic category showcase modules featuring authentic cover photos for Royal Panjabi & Thobes, Dawah T-Shirts, Denim Joggers, Docker Caps, and Artisanal Attars with horizontal snapping product carousels.
 - **Verification**: 23/23 tests passing in `scripts/run-tests.js`, 0 TypeScript errors, Metro server active on port 8083.
+
+---
+
+### Iteration 7 — Brand Social, Navigation, Shoppable Reels & Customer UI Hardening
+- **Investigated**: Comprehensive Brand Social, Navigation & Home Experience Enhancement requirements.
+- **Implemented**:
+  - `src/services/social/socialService.ts`: Created typed social media abstraction layer with official profiles (`facebook.com/oneummahbd`, `instagram.com/oneummahbd`), stories, and shoppable reels with tagged catalog SKUs.
+  - `docs/social-media-integration.md`: Created detailed technical guide on Meta Graph API scopes, long-lived tokens, webhooks, and commerce linking.
+  - `src/components/ShoppableSocialSection.tsx`: Built circular story reels with unread status rings, video metrics, captions, and 1-tap "Shop The Look" product navigation.
+  - `src/components/HeroMotionExperience.tsx`: Built motion hero experience with animated breathing loop, season tags, play toggle, and primary "Shop New Drop" CTA.
+  - `src/components/NotificationPermissionModal.tsx`: Built value-first permission journey with category toggles (Orders, Flash Deals, New Drops, Jummah).
+  - `src/app/(tabs)/account.tsx`: Completely eradicated developer/demo admin toggle from customer view; added Notification Preferences and Official Social Community cards.
+  - `src/app/(tabs)/ai-assistant.tsx`: Added human support WhatsApp escalation button and chat history reset.
+  - `app.json`: Configured Expo OTA updates (`updates: { fallbackToCacheTimeout: 0 }`).
+  - `src/app/(tabs)/index.tsx`: Integrated `HeroMotionExperience`, `ShoppableSocialSection`, Brand Heritage story, and Social Community Footer.
+- **Verification**: 27/27 tests passing in `scripts/run-tests.js`, 0 TypeScript errors.

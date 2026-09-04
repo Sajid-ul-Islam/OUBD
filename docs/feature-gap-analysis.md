@@ -26,8 +26,12 @@ A rigorous comparison between the existing [oneummahbd.shop](https://oneummahbd.
    - The web version often redirects users to multi-step Shopify hosted pages. The mobile application keeps all steps in-app for minimal latency.
 2. **Simplified Delivery Zone Selection**:
    - In Bangladesh, delivery pricing is strictly split into Inside Dhaka (৳70) and Outside Dhaka (৳130). The mobile app places this as a prominent radio toggle directly on checkout.
-3. **Dedicated Wishlist Screen**:
-   - On the web version, wishlist functionality is often hidden or requires third-party plugins. The mobile app provides a first-class bottom tab for wishlist items.
+3. **Dedicated Wishlist Screen & Header Placement**:
+   - On the web version, wishlist functionality is often hidden or requires third-party plugins. The mobile app provides a dedicated wishlist screen linked directly from the top header with live item count badge.
+4. **Shoppable Social & Video Reels**:
+   - Live web storefront has static links to Facebook/Instagram. Mobile app natively embeds shoppable stories and Reels with 1-tap "Shop The Look" product links.
+5. **Categorized Notification Center & Value-First Opt-In**:
+   - Web uses intrusive push prompts. Mobile app uses an educational permission modal with granular preference toggles for Orders, Flash Sales, and Jummah alerts.
 
 ---
 

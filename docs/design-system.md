@@ -111,3 +111,27 @@ Using an 8-point spatial grid with 4-point micro adjustments:
 - 48dp touch height with subtle border `#D0D5DD`.
 - Clear focus state with `#05AE7A` border and gentle ring.
 - Explicit label and helper/error text below.
+
+---
+
+## 6. Motion & Animation System
+
+- **Screen Transitions**: Native slide-from-right transitions on Android Stack with 300ms duration.
+- **Card Touch Feedback**: Spring scale animation (`transform: [{ scale: 0.96 }]`) on touch press-in and spring release.
+- **Hero Motion Canvas**: Ambient loop with subtle breathing scale (1.00 to 1.04 over 3500ms), giving live motion presence without high battery or CPU overhead.
+- **Story Glow Rings**: Active stories highlighted with emerald gradient borders (`#05AE7A`); viewed stories with neutral border (`#D0D5DD`).
+
+---
+
+## 7. Social & Shoppable Video Components
+
+- **Story Circles**: 66dp outer diameter with 2dp border padding, 57dp circular avatar, and badge pill anchored bottom.
+- **Shoppable Reel Card**: 250dp fixed-width card with 180dp 16:9 thumbnail, dark gradient overlay, play icon, view count, and integrated 1-tap **"Shop The Look"** product preview pill.
+
+---
+
+## 8. Notification & Permission Dialog Standards
+
+- Value-first bottom sheet before requesting system alert permission.
+- Individual preference toggles for Orders, Flash Sales, New Collections, and Jummah reminders.
+- Dismissive options always polite ("Maybe Later") rather than aggressive.

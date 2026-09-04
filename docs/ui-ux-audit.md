@@ -36,3 +36,12 @@ Comprehensive evaluation of visual quality, ergonomic touch standards, Android p
 - [x] **Empty States**: Friendly, brand-aligned illustrations and actionable buttons for Empty Cart ("Explore New Arrivals"), Empty Wishlist, and Empty Orders.
 - [x] **Error Recovery**: Clear alert dialogs and retry buttons for network hiccups or invalid form entries.
 - [x] **Zero-Placeholder Guarantee**: No "Lorem Ipsum" or placeholder product labels; all products, categories, showrooms, and policies represent real brand data.
+
+---
+
+## 5. Recent Audit Milestones & Resolutions
+
+- **Android Status Bar Edge-to-Edge**: Fixed unutilized blank status bar gap by enabling `translucent: true` and `backgroundColor: "#00000000"` in `app.json` and dynamic `topPadding` in `Header.tsx`.
+- **Customer UI Isolation**: Eradicated the developer / demo admin switcher from customer-facing account view.
+- **Header De-cluttering**: Replaced duplicate Cart icon with a 3-category Notification Bell (Campaign Deals, Orders, Jummah reminders) while preserving Wishlist in the header.
+- **Social + Commerce Seamless Flow**: Verified 1-tap "Shop The Look" links on Instagram/Facebook reels directly routing to product detail pages.
