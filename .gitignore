@@ -3,3 +3,7 @@ dist/
 web-build/
 node_modules/
 *.log
+node_modules/
+android/
+package-lock.json
+releases/
